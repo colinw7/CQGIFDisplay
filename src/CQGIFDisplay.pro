@@ -10,13 +10,13 @@ QMAKE_CXXFLAGS += -std=c++11
 
 CONFIG += debug
 
+MOC_DIR = .moc
+
 # Input
 SOURCES += \
 CQGIFDisplay.cpp \
 CQImageButton.cpp \
-CQIntegerEdit.cpp \
 CQLabel.cpp \
-CQPixmapCache.cpp \
 CPixmap.cpp \
 CPixmapImage.cpp \
 CGIFImage.cpp \
@@ -27,9 +27,7 @@ CXPMImage.cpp \
 HEADERS += \
 CQGIFDisplay.h \
 CQImageButton.h \
-CQIntegerEdit.h \
 CQLabel.h \
-CQPixmapCache.h \
 CPixmap.h \
 CPixmapImage.h \
 CGIFImage.h \

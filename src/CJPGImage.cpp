@@ -18,7 +18,7 @@ CJPGImage()
 
 bool
 CJPGImage::
-read(CFile *file, CGenImage *image)
+read(CFile * /*file*/, CGenImage * /*image*/)
 {
 #if 0
   struct jpeg_error_mgr         jerr;
@@ -188,7 +188,7 @@ read(CFile *file, CGenImage *image)
 
 bool
 CJPGImage::
-readHeader(CFile *file, CGenImage *image)
+readHeader(CFile * /*file*/, CGenImage * /*image*/)
 {
 #if 0
   struct jpeg_error_mgr         jerr;
@@ -239,12 +239,14 @@ readHeader(CFile *file, CGenImage *image)
   //------
 
   return true;
+#else
+  return false;
 #endif
 }
 
 int
 CJPGImage::
-jpgProcessMarker(struct jpeg_decompress_struct *cinfo)
+jpgProcessMarker(struct jpeg_decompress_struct * /*cinfo*/)
 {
 #if 0
   std::cerr << "In jpgProcessMarker" << std::endl;
@@ -265,7 +267,7 @@ jpgProcessMarker(struct jpeg_decompress_struct *cinfo)
 
 int
 CJPGImage::
-jpgGetC(struct jpeg_decompress_struct *cinfo)
+jpgGetC(struct jpeg_decompress_struct * /*cinfo*/)
 {
 #if 0
   struct jpeg_source_mgr *datasrc = cinfo->src;
@@ -285,7 +287,7 @@ jpgGetC(struct jpeg_decompress_struct *cinfo)
 
 void
 CJPGImage::
-jpgErrorProc(struct jpeg_common_struct *cinfo)
+jpgErrorProc(struct jpeg_common_struct * /*cinfo*/)
 {
 #if 0
   std::cerr << "JPEG Error" << std::endl;
@@ -298,7 +300,7 @@ jpgErrorProc(struct jpeg_common_struct *cinfo)
 
 void
 CJPGImage::
-jpgMessageProc(struct jpeg_common_struct *cinfo)
+jpgMessageProc(struct jpeg_common_struct * /*cinfo*/)
 {
 #if 0
   char buffer[JMSG_LENGTH_MAX];
@@ -311,7 +313,7 @@ jpgMessageProc(struct jpeg_common_struct *cinfo)
 
 bool
 CJPGImage::
-write(CFile *file, CGenImage *image)
+write(CFile * /*file*/, CGenImage * /*image*/)
 {
 #if 0
   struct jpeg_error_mgr       jerr;
