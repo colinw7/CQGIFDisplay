@@ -47,10 +47,12 @@ INCLUDEPATH += \
 ../../CImageLib/include \
 ../../CFont/include \
 ../../CUndo/include \
+../../CFileUtil/include \
 ../../CFile/include \
 ../../CMath/include \
 ../../CStrUtil/include \
 ../../CUtil/include \
+../../CRGBName/include \
 
 unix:LIBS += \
 -L$$LIB_DIR \
@@ -64,9 +66,10 @@ unix:LIBS += \
 -L../../CRGBName/lib \
 -L../../CFont/lib \
 -L../../CStrUtil/lib \
+-L../../CFileUtil/lib \
 -L../../CFile/lib \
 -L../../COS/lib \
 -L../../CRegExp/lib \
 -lCQUtil -lCQPixmapEd -lCQColorSelector -lCConfig -lCUtil -lCImageLib \
--lCRGBName -lCUndo -lCFont -lCFile -lCOS -lCStrUtil -lCRegExp \
+-lCRGBName -lCUndo -lCFont -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre
