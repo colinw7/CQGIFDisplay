@@ -15,7 +15,6 @@ MOC_DIR = .moc
 # Input
 SOURCES += \
 CQGIFDisplay.cpp \
-CQImageButton.cpp \
 CQLabel.cpp \
 CPixmap.cpp \
 CPixmapImage.cpp \
@@ -26,7 +25,6 @@ CXPMImage.cpp \
 
 HEADERS += \
 CQGIFDisplay.h \
-CQImageButton.h \
 CQLabel.h \
 CPixmap.h \
 CPixmapImage.h \
@@ -52,6 +50,7 @@ INCLUDEPATH += \
 ../../CMath/include \
 ../../CStrUtil/include \
 ../../CUtil/include \
+../../COS/include \
 ../../CRGBName/include \
 
 unix:LIBS += \
@@ -65,11 +64,12 @@ unix:LIBS += \
 -L../../CImageLib/lib \
 -L../../CRGBName/lib \
 -L../../CFont/lib \
+-L../../CMath/lib \
 -L../../CStrUtil/lib \
 -L../../CFileUtil/lib \
 -L../../CFile/lib \
 -L../../COS/lib \
 -L../../CRegExp/lib \
 -lCQUtil -lCQPixmapEd -lCQColorSelector -lCConfig -lCUtil -lCImageLib \
--lCRGBName -lCUndo -lCFont -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp \
+-lCRGBName -lCUndo -lCFont -lCFileUtil -lCFile -lCMath -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre
