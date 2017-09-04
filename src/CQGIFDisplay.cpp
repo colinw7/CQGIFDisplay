@@ -107,6 +107,11 @@ CQGIFDisplay() :
   CQImageButton *step_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY_ONE"));
   CQImageButton *bstep_button = new CQImageButton(CQPixmapCacheInst->getIcon("REWIND_ONE"));
 
+  play_button ->setToolTip("Play");
+  pause_button->setToolTip("Pause");
+  step_button ->setToolTip("Step");
+  bstep_button->setToolTip("Back Step");
+
   connect(play_button , SIGNAL(clicked()), this, SLOT(playSlot ()));
   connect(pause_button, SIGNAL(clicked()), this, SLOT(pauseSlot()));
   connect(step_button , SIGNAL(clicked()), this, SLOT(stepSlot ()));
