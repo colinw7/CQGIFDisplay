@@ -2,4 +2,4 @@
 
 Display GIF frames.
 
-![snapshow](CQGIFDisplay.png "Qt GIF Display")
+![snapshot](CQGIFDisplay.png "Qt GIF Display")
