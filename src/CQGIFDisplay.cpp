@@ -6,6 +6,7 @@
 #include <CQLabel.h>
 #include <CQPixmapEd.h>
 #include <CQPixmapCache.h>
+#include <CQImageUtil.h>
 #include <CQUtil.h>
 
 #include <QVBoxLayout>
@@ -271,7 +272,7 @@ draw(QPainter *painter)
     painter->fillRect(rect(), QBrush(CQUtil::rgbaToColor(bg)));
   }
 
-  painter->drawImage(QPoint(l, t), CQUtil::toQImage(image));
+  painter->drawImage(QPoint(l, t), CQImageUtil::toQImage(image));
 }
 
 void
@@ -507,7 +508,7 @@ paintEvent(QPaintEvent *)
     painter.fillRect(QRect(x + l - d/2, y + t - d/2, s + d, s + d),
                      QBrush(CQUtil::rgbaToColor(bg)));
 
-    painter.drawImage(QPoint(x + l, y + t), CQUtil::toQImage(image));
+    painter.drawImage(QPoint(x + l, y + t), CQImageUtil::toQImage(image));
 
     x += s + 2*d;
 
