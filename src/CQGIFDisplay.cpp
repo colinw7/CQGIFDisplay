@@ -27,7 +27,7 @@ main(int argc, char **argv)
 {
   CQApp app(argc, argv);
 
-  CQGIFDisplay *display = new CQGIFDisplay;
+  auto *display = new CQGIFDisplay;
 
   if (argc > 1)
     display->loadFile(argv[1]);
@@ -45,16 +45,16 @@ CQGIFDisplay() :
 
   setWindowTitle("CQGIFDisplay");
 
-  QVBoxLayout *layout1 = new QVBoxLayout(this);
+  auto *layout1 = new QVBoxLayout(this);
   layout1->setMargin(0); layout1->setSpacing(2);
 
-  QHBoxLayout *layout2 = new QHBoxLayout;
+  auto *layout2 = new QHBoxLayout;
   layout2->setMargin(0); layout2->setSpacing(2);
 
-  QVBoxLayout *layout3 = new QVBoxLayout;
+  auto *layout3 = new QVBoxLayout;
   layout3->setMargin(0); layout3->setSpacing(2);
 
-  QVBoxLayout *layout4 = new QVBoxLayout;
+  auto *layout4 = new QVBoxLayout;
   layout4->setMargin(0); layout4->setSpacing(2);
 
   frame_edit_   = new CQIntegerEdit();
@@ -64,7 +64,7 @@ CQGIFDisplay() :
   delay_edit_   = new CQIntegerEdit();
   dispose_edit_ = new CQIntegerEdit();
 
-  QGridLayout *glayout = new QGridLayout;
+  auto *glayout = new QGridLayout;
 
   glayout->addWidget(new CQLabel("Frame"  ), 0, 0);
   glayout->addWidget(new CQLabel("Left"   ), 1, 0);
@@ -78,11 +78,11 @@ CQGIFDisplay() :
   glayout->addWidget(delay_edit_  , 3, 1);
   glayout->addWidget(dispose_edit_, 4, 1);
 
-  QHBoxLayout *blayout = new QHBoxLayout;
+  auto *blayout = new QHBoxLayout;
   blayout->setMargin(0); blayout->setSpacing(2);
 
-  QPushButton *edit_button   = new QPushButton("Edit");
-  QPushButton *delete_button = new QPushButton("Delete");
+  auto *edit_button   = new QPushButton("Edit");
+  auto *delete_button = new QPushButton("Delete");
 
   connect(edit_button, SIGNAL(clicked()), this, SLOT(editSlot()));
 
@@ -100,13 +100,13 @@ CQGIFDisplay() :
 
   layout3->addWidget(canvas_);
 
-  QHBoxLayout *clayout = new QHBoxLayout;
+  auto *clayout = new QHBoxLayout;
   clayout->setMargin(2); clayout->setSpacing(16);
 
-  CQImageButton *play_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY"));
-  CQImageButton *pause_button = new CQImageButton(CQPixmapCacheInst->getIcon("PAUSE"));
-  CQImageButton *step_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY_ONE"));
-  CQImageButton *bstep_button = new CQImageButton(CQPixmapCacheInst->getIcon("REWIND_ONE"));
+  auto *play_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY"));
+  auto *pause_button = new CQImageButton(CQPixmapCacheInst->getIcon("PAUSE"));
+  auto *step_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY_ONE"));
+  auto *bstep_button = new CQImageButton(CQPixmapCacheInst->getIcon("REWIND_ONE"));
 
   play_button ->setToolTip("Play");
   pause_button->setToolTip("Pause");
@@ -416,7 +416,7 @@ CQGIFDisplayStrip::
 CQGIFDisplayStrip(CQGIFDisplay *display) :
  QWidget(0), display_(display)
 {
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
 
   canvas_ = new CQGIFDisplayStripCanvas(this);
 
