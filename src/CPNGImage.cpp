@@ -279,7 +279,7 @@ bool
 CPNGImage::
 write(CFile *file, CGenImage *image)
 {
-  file->open(CFile::WRITE);
+  file->open(CFile::Mode::WRITE);
 
   if (image->hasColormap())
     return false;

@@ -63,13 +63,7 @@ class CGenImage {
 class CImageData : public CGenImage {
  public:
   CImageData() :
-   CGenImage(),
-   width_   (0),
-   height_  (0),
-   colorMap_(false),
-   colors_  (),
-   data_    (NULL),
-   type_    (CFILE_TYPE_NONE) {
+   CGenImage() {
   }
 
   CImageData(const CImageData &image) :
@@ -78,7 +72,6 @@ class CImageData : public CGenImage {
    height_  (image.height_),
    colorMap_(image.colorMap_),
    colors_  (image.colors_),
-   data_    (NULL),
    type_    (image.type_) {
     data_ = new uint [width_*height_];
 
@@ -87,6 +80,20 @@ class CImageData : public CGenImage {
 
   virtual ~CImageData() {
     delete [] data_;
+  }
+
+  CImageData &operator=(const CImageData &image) {
+    width_    = image.width_;
+    height_   = image.height_;
+    colorMap_ = image.colorMap_;
+    colors_   = image.colors_;
+    type_     = image.type_;
+
+    data_ = new uint [width_*height_];
+
+    memcpy(data_, image.data_, width_*height_*sizeof(uint));
+
+    return *this;
   }
 
   CImageData *dup() const {
@@ -205,15 +212,13 @@ class CImageData : public CGenImage {
   }
 
  private:
-  CImageData &operator=(const CImageData &image);
-
- private:
-  uint               width_, height_;
-  bool               colorMap_;
+  uint               width_    { 0 };
+  uint               height_   { 0 };
+  bool               colorMap_ { false };
   std::vector<CRGBA> colors_;
   int                transparent_color_;
-  uint*              data_;
-  CFileType          type_;
+  uint*              data_     { nullptr };
+  CFileType          type_     { CFILE_TYPE_NONE };
 };
 
 #endif

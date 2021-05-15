@@ -6,7 +6,9 @@ DEPENDPATH += .
 
 QT += widgets
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += \
+-std=c++14 \
+-DCQUTIL_IMAGE \
 
 CONFIG += debug
 
@@ -57,6 +59,7 @@ unix:LIBS += \
 -L$$LIB_DIR \
 -L../../CQUtil/lib \
 -L../../CQPixmapEd/lib \
+-L../../CQToolTip/lib \
 -L../../CQColorSelector/lib \
 -L../../CUtil/lib \
 -L../../CConfig/lib \
@@ -70,6 +73,6 @@ unix:LIBS += \
 -L../../CFile/lib \
 -L../../COS/lib \
 -L../../CRegExp/lib \
--lCQUtil -lCQPixmapEd -lCQColorSelector -lCConfig -lCUtil -lCImageLib \
+-lCQPixmapEd -lCQUtil -lCQColorSelector -lCConfig -lCUtil -lCImageLib \
 -lCRGBName -lCUndo -lCFont -lCFileUtil -lCFile -lCMath -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre
