@@ -75,9 +75,9 @@ class CQImageCanvas : public QWidget {
  public:
   CQImageCanvas(CQGIFDisplay *display);
 
-  void resizeEvent(QResizeEvent *event);
+  void resizeEvent(QResizeEvent *event) override;
 
-  void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event) override;
 
  private:
   QImage qimage_;
@@ -110,9 +110,9 @@ class CQGIFDisplayStripCanvas : public QWidget {
 
   void setOffset(int offset);
 
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 
-  void mousePressEvent(QMouseEvent *e);
+  void mousePressEvent(QMouseEvent *e) override;
 
  private:
   CQGIFDisplayStrip *strip_;

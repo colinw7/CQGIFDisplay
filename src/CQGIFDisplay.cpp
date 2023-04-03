@@ -8,6 +8,7 @@
 #include <CQPixmapCache.h>
 #include <CQImageUtil.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -175,9 +176,9 @@ loadFile(const std::string &filename)
 
     int frame_size = h + 2*d;
 
-    ((QWidget *) strip_)->setMinimumWidth(w + 2*d);
+    strip_->QWidget::setMinimumWidth(w + 2*d);
 
-    ((QWidget *) strip_)->setFixedHeight(frame_size + 48);
+    strip_->QWidget::setFixedHeight(frame_size + 48);
 
     int x = d;
 
