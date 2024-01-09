@@ -379,6 +379,9 @@ saveSlot()
     ++i;
   }
 
+  auto nstr = QString::number(i);
+  auto nlen = nstr.length();
+
   //---
 
   auto saveImage = QImage(QSize(w, h), QImage::Format_ARGB32);
@@ -409,7 +412,10 @@ saveSlot()
 
     painter.drawImage(QPoint(l, t), qimage);
 
-    auto name = QString("frame_%1.png").arg(i);
+    auto istr = QString::number(i);
+    while (istr.length() < nlen) istr = "0" + istr;
+
+    auto name = "frame_" + istr + ".png";
 
     saveImage.save(name, "PNG");
 
