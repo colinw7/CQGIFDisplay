@@ -21,6 +21,11 @@ class CXPMImage {
     return instance;
   }
 
+ ~CXPMImage() { }
+
+  CXPMImage(const CXPMImage &xpm) = delete;
+  CXPMImage &operator=(const CXPMImage &xpm) = delete;
+
   bool read(CFile *file, CGenImage *image);
 
   bool read(const char **strings, uint num_strings, CGenImage *image);
@@ -34,12 +39,6 @@ class CXPMImage {
  private:
   CXPMImage();
 
- ~CXPMImage() { }
-
-  CXPMImage(const CXPMImage &xpm);
-
-  const CXPMImage &operator=(const CXPMImage &xpm);
-
  private:
   bool readHeader(const char *data, int *i);
 
@@ -48,8 +47,7 @@ class CXPMImage {
   bool readValues(const char *data, int *i, CXPMImageData *xpm_data);
   bool readValuesString(CXPMImageData *xpm_data, const char *str);
   bool readColors(const char *data, int *i, CXPMImageData *xpm_data);
-  bool readColorString(CXPMImageData *xpm_data, const char *str,
-                       CXPMImageColor *color);
+  bool readColorString(CXPMImageData *xpm_data, const char *str, CXPMImageColor *color);
 
   void skipToColorKey(const char *str, int *i);
 

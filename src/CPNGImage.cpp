@@ -1,8 +1,9 @@
 #include <CPNGImage.h>
 #include <CGenImage.h>
 #include <CFile.h>
+#include <CRGBA.h>
 
-#include "png.h"
+#include <png.h>
 
 static void pngWriteErrorHandler(png_structp png_ptr, png_const_charp msg);
 
@@ -29,26 +30,26 @@ read(CFile *file, CGenImage *image)
     return false;
   }
 
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
-  if (png_ptr == NULL)
+  if (png_ptr == nullptr)
     return false;
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
 
-  if (info_ptr == NULL) {
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
+  if (info_ptr == nullptr) {
+    png_destroy_read_struct(&png_ptr, nullptr, nullptr);
     return false;
   }
 
   png_infop end_info = png_create_info_struct(png_ptr);
 
-  if (end_info == NULL) {
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+  if (end_info == nullptr) {
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     return false;
   }
 
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     return false;
   }
@@ -97,25 +98,25 @@ read(CFile *file, CGenImage *image)
 
   png_read_update_info(png_ptr, info_ptr);
 
-  int width            = png_get_image_width (png_ptr, info_ptr);
-  int height           = png_get_image_height(png_ptr, info_ptr);
+  int width            = int(png_get_image_width (png_ptr, info_ptr));
+  int height           = int(png_get_image_height(png_ptr, info_ptr));
 #if 0
   int filter_type      = png_get_filter_type(png_ptr, info_ptr);
   int compression_type = png_get_compression_type(png_ptr, info_ptr);
   int interlace_type   = png_get_interlace_type(png_ptr, info_ptr);
   int channels         = png_get_channels(png_ptr, info_ptr);
 #endif
-  int rowbytes         = png_get_rowbytes(png_ptr, info_ptr);
+  int rowbytes         = int(png_get_rowbytes(png_ptr, info_ptr));
 
   bit_depth  = png_get_bit_depth(png_ptr, info_ptr);
   color_type = png_get_color_type(png_ptr, info_ptr);
 
   //------
 
-  png_bytep *row_pointers = new png_bytep [height];
+  auto *row_pointers = new png_bytep [size_t(height)];
 
   for (int i = 0; i < height; ++i)
-    row_pointers[i] = new uchar [rowbytes];
+    row_pointers[i] = new uchar [size_t(rowbytes)];
 
   //------
 
@@ -132,7 +133,7 @@ read(CFile *file, CGenImage *image)
   if (bit_depth == 8)
     depth = 24;
 
-  uint *data = new uint [width*height];
+  auto *data = new uint [size_t(width*height)];
 
   if (depth == 24) {
     if (color_type & PNG_COLOR_MASK_ALPHA) {
@@ -181,27 +182,25 @@ read(CFile *file, CGenImage *image)
 
   //------
 
-  image->setType(CFILE_TYPE_IMAGE_PNG);
+  image->setType(CGenImage::Type::PNG);
 
-  image->setDataSize(width, height);
+  image->setDataSize(uint(width), uint(height));
 
   if (depth <= 8) {
     for (int i = 0; i < num_palette; ++i) {
-      CRGBA rgba;
-
-      rgba.setRGBAI(palette[i].red, palette[i].green, palette[i].blue);
+      CGenImage::RGBA rgba(palette[i].red/255.0, palette[i].green/255.0, palette[i].blue/255.0);
 
       image->addColor(rgba);
     }
 
     for (int y = 0, k = 0; y < height; ++y)
       for (int x = 0; x < width; ++x, ++k)
-        image->setColorIndex(x, y, data[k]);
+        image->setColorIndex(uint(x), uint(y), data[k]);
   }
   else {
     for (int y = 0, k = 0; y < height; ++y)
       for (int x = 0; x < width; ++x, ++k)
-        image->setPixel(x, y, data[k]);
+        image->setPixel(uint(x), uint(y), data[k]);
   }
 
   delete [] data;
@@ -229,26 +228,26 @@ readHeader(CFile *file, CGenImage *image)
     return false;
   }
 
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
-  if (png_ptr == NULL)
+  if (png_ptr == nullptr)
     return false;
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
 
-  if (info_ptr == NULL) {
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
+  if (info_ptr == nullptr) {
+    png_destroy_read_struct(&png_ptr, nullptr, nullptr);
     return false;
   }
 
   png_infop end_info = png_create_info_struct(png_ptr);
 
-  if (end_info == NULL) {
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+  if (end_info == nullptr) {
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     return false;
   }
 
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     return false;
   }
@@ -259,16 +258,16 @@ readHeader(CFile *file, CGenImage *image)
 
   png_read_info(png_ptr, info_ptr);
 
-  int width  = png_get_image_width (png_ptr, info_ptr);
-  int height = png_get_image_height(png_ptr, info_ptr);
+  int width  = int(png_get_image_width (png_ptr, info_ptr));
+  int height = int(png_get_image_height(png_ptr, info_ptr));
 
   png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
   //------
 
-  image->setType(CFILE_TYPE_IMAGE_PNG);
+  image->setType(CGenImage::Type::PNG);
 
-  image->setSize(width, height);
+  image->setSize(uint(width), uint(height));
 
   //------
 
@@ -279,13 +278,18 @@ bool
 CPNGImage::
 write(CFile *file, CGenImage *image)
 {
+  if (image->getWidth() == 0 && image->getHeight() == 0)
+    return false;
+
+  //---
+
   file->open(CFile::Mode::WRITE);
 
   if (image->hasColormap())
     return false;
 
   png_structp png_ptr =
-    png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, pngWriteErrorHandler, NULL);
+    png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, pngWriteErrorHandler, nullptr);
 
   if (! png_ptr)
     return false;
@@ -293,11 +297,11 @@ write(CFile *file, CGenImage *image)
   png_infop info_ptr = png_create_info_struct(png_ptr);
 
   if (! info_ptr) {
-    png_destroy_write_struct(&png_ptr, NULL);
+    png_destroy_write_struct(&png_ptr, nullptr);
     return false;
   }
 
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     png_destroy_write_struct(&png_ptr, &info_ptr);
     return false;
   }
@@ -309,8 +313,8 @@ write(CFile *file, CGenImage *image)
   int color_type     = PNG_COLOR_TYPE_RGB_ALPHA;
   int interlace_type = PNG_INTERLACE_NONE;
 
-  int width  = image->getWidth ();
-  int height = image->getHeight();
+  auto width  = image->getWidth ();
+  auto height = image->getHeight();
 
   png_set_IHDR(png_ptr, info_ptr, width, height, 8, color_type, interlace_type,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
@@ -325,24 +329,24 @@ write(CFile *file, CGenImage *image)
 
   uint r, g, b, a;
 
-  for (int y = 0; y < height; ++y) {
+  for (uint y = 0; y < height; ++y) {
     j = 0;
 
-    for (int x = 0; x < width; ++x, ++i, j += 4) {
-      uint pixel = image->getPixel(x, y);
+    for (uint x = 0; x < width; ++x, ++i, j += 4) {
+      auto pixel = image->getPixel(x, y);
 
       CRGBA::decodeARGB(pixel, &r, &g, &b, &a);
 
-      row_data[j + 0] = r;
-      row_data[j + 1] = g;
-      row_data[j + 2] = b;
-      row_data[j + 3] = a;
+      row_data[j + 0] = uchar(r);
+      row_data[j + 1] = uchar(g);
+      row_data[j + 2] = uchar(b);
+      row_data[j + 3] = uchar(a);
     }
 
     png_write_row(png_ptr, row_data);
   }
 
-  png_write_end(png_ptr, NULL);
+  png_write_end(png_ptr, nullptr);
 
   delete [] row_data;
 
@@ -356,5 +360,5 @@ pngWriteErrorHandler(png_structp png_ptr, png_const_charp msg)
 {
   fprintf(stderr, "PNG write %s\n", msg);
 
-  longjmp(png_ptr->jmpbuf, 1);
+  longjmp(png_jmpbuf(png_ptr), 1);
 }

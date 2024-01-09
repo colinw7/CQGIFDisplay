@@ -15,23 +15,6 @@ class QScrollBar;
 class CQGIFDisplay : public QWidget {
   Q_OBJECT
 
- private:
-  CQImageCanvas     *canvas_;
-  CQIntegerEdit     *frame_edit_;
-  CQIntegerEdit     *left_edit_;
-  CQIntegerEdit     *top_edit_;
-  CQIntegerEdit     *delay_edit_;
-  QLineEdit         *dispose_edit_;
-  CQGIFDisplayStrip *strip_;
-  CQPixmap          *pixmap_;
-  CImageAnim        *anim_;
-  bool               playing_;
-  int                frame_size_;
-  int                frame_border_;
-  int                frame_;
-  bool               clear_;
-  QTimer            *timer_;
-
  public:
   CQGIFDisplay();
  ~CQGIFDisplay();
@@ -62,9 +45,29 @@ class CQGIFDisplay : public QWidget {
   void bstepSlot();
 
   void editSlot();
+  void saveSlot();
 
   void timeout();
+
+ private:
+  CQImageCanvas     *canvas_ { nullptr };
+  CQIntegerEdit     *frame_edit_ { nullptr };
+  CQIntegerEdit     *left_edit_ { nullptr };
+  CQIntegerEdit     *top_edit_ { nullptr };
+  CQIntegerEdit     *delay_edit_ { nullptr };
+  QLineEdit         *dispose_edit_ { nullptr };
+  CQGIFDisplayStrip *strip_ { nullptr };
+  CQPixmap          *pixmap_ { nullptr };
+  CImageAnim        *anim_ { nullptr };
+  bool               playing_ { false };
+  int                frame_size_ { 64 };
+  int                frame_border_ { 4 };
+  int                frame_ { 0 };
+  bool               clear_ { false };
+  QTimer            *timer_ { nullptr };
 };
+
+//---
 
 class CQImageCanvas : public QWidget {
   Q_OBJECT
@@ -83,6 +86,8 @@ class CQImageCanvas : public QWidget {
   QImage qimage_;
 };
 
+//---
+
 class CQGIFDisplayStrip : public QWidget {
   Q_OBJECT
 
@@ -97,10 +102,12 @@ class CQGIFDisplayStrip : public QWidget {
   void scrollSlot(int);
 
  private:
-  CQGIFDisplay            *display_;
-  QScrollBar              *hbar_;
-  CQGIFDisplayStripCanvas *canvas_;
+  CQGIFDisplay            *display_ { nullptr };
+  QScrollBar              *hbar_ { nullptr };
+  CQGIFDisplayStripCanvas *canvas_ { nullptr };
 };
+
+//---
 
 class CQGIFDisplayStripCanvas : public QWidget {
   Q_OBJECT
@@ -115,6 +122,6 @@ class CQGIFDisplayStripCanvas : public QWidget {
   void mousePressEvent(QMouseEvent *e) override;
 
  private:
-  CQGIFDisplayStrip *strip_;
-  int                offset_;
+  CQGIFDisplayStrip *strip_ { nullptr };
+  int                offset_ { 0 };
 };

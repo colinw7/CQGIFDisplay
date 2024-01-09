@@ -2,6 +2,7 @@
 #define CGIF_IMAGE_H
 
 #include <vector>
+#include <iosfwd>
 #include <sys/types.h>
 
 #define CGIFImageInst CGIFImage::getInstance()
@@ -18,7 +19,6 @@ struct CGIFImageHeader;
 struct CGIFImageImageHeader;
 struct CGIFImageData;
 
-class CFile;
 class CGenImage;
 class CGIFAnim;
 
@@ -33,34 +33,35 @@ class CGIFImage {
     return instance;
   }
 
+ ~CGIFImage() { }
+
+  CGIFImage(const CGIFImage &gif) = delete;
+  CGIFImage &operator=(const CGIFImage &gif) = delete;
+
   static bool getDebug() { return false; }
 
-  bool read(CFile *file, CGenImage *image);
+  bool isGIF(std::istream &file) const;
 
-  bool readHeader(CFile *file, CGenImage *image);
+  bool read(std::istream &file, CGenImage *image);
 
-  bool write(CFile *file, CGenImage *image);
+  bool readHeader(std::istream &file, CGenImage *image);
 
-  static bool writeAnim(CFile *file, const std::vector<CGenImage *> &images, int delay=0);
+  bool write(std::ostream &os, CGenImage *image);
+
+  static bool writeAnim(std::ostream &os, const std::vector<CGenImage *> &images, int delay=0);
 
  private:
   CGIFImage();
 
- ~CGIFImage() { }
-
-  CGIFImage(const CGIFImage &gif);
-
-  const CGIFImage &operator=(const CGIFImage &gif);
-
  public:
-  static CGIFAnim *createAnim(CFile *file, CGenImage *proto);
+  static CGIFAnim *createAnim(std::istream &file, CGenImage *proto);
 
  private:
-  static void readHeader(CFile *file, CGenImage *image, CGIFImageHeader *header);
+  static bool readHeader(std::istream &file, CGenImage *image, CGIFImageHeader *header);
 
-  static void readGlobalColors(CFile *file, CGIFImageData *gif_data);
+  static void readGlobalColors(std::istream &file, CGIFImageData *gif_data);
 
-  static void readAnimData(CFile *file, CGenImage *proto, CGIFAnim *image_anim,
+  static bool readAnimData(std::istream &file, CGenImage *proto, CGIFAnim *image_anim,
                            CGIFImageData *gif_data);
 
   static bool decompressData(uchar *in_data, int in_data_size, uchar *out_data, int out_data_size);
@@ -69,19 +70,19 @@ class CGIFImage {
 
   static void deInterlace(uchar *image_data, CGIFImageImageHeader *image_header);
 
-  static void writeHeader(CFile *file, CGenImage *image);
-  static void writeGraphicsBlock(CFile *file, CGenImage *image, int delay=0);
-  static void writeData(CFile *file, CGenImage *image);
+  static void writeHeader(std::ostream &os, CGenImage *image);
+  static void writeGraphicsBlock(std::ostream &os, CGenImage *image, int delay=0);
+  static void writeData(std::ostream &os, CGenImage *image);
 
   static uint findChildCode(uint parent_code, uint character);
 
   static void clearDictionary();
-  static void outputCode(CFile *file, uint code);
-  static void writeCodeByte(CFile *file, int data);
-  static void flushCodeBytes(CFile *file);
-  static void writeChars(CFile *file, const char *chars, int len);
-  static void writeShort(CFile *file, int data);
-  static void writeByte(CFile *file, int data);
+  static void outputCode(std::ostream &os, uint code);
+  static void writeCodeByte(std::ostream &os, int data);
+  static void flushCodeBytes(std::ostream &os);
+  static void writeChars(std::ostream &os, const char *chars, int len);
+  static void writeShort(std::ostream &os, int data);
+  static void writeByte(std::ostream &os, int data);
 };
 
 #endif

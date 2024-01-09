@@ -3,18 +3,13 @@
 
 CPixmapImage::
 CPixmapImage() :
- CGenImage(),
- pixmap_  (NULL),
- colorMap_(false),
- colors_  (),
- type_    (CFILE_TYPE_NONE)
+ CGenImage()
 {
 }
 
 CPixmapImage::
 CPixmapImage(const CPixmapImage &pixmap) :
  CGenImage(pixmap),
- pixmap_  (NULL),
  colorMap_(pixmap.colorMap_),
  colors_  (pixmap.colors_),
  type_    (pixmap.type_)
@@ -66,7 +61,7 @@ assign(const CGenImage &image)
 
 void
 CPixmapImage::
-setType(CFileType type)
+setType(Type type)
 {
   type_ = type;
 }
@@ -135,14 +130,14 @@ hasColormap() const
 
 void
 CPixmapImage::
-addColor(const CRGBA &rgba)
+addColor(const RGBA &rgba)
 {
   assert(colorMap_);
 
   colors_.push_back(rgba);
 }
 
-const CRGBA &
+const CPixmapImage::RGBA &
 CPixmapImage::
 getColor(uint ind) const
 {
@@ -155,7 +150,7 @@ uint
 CPixmapImage::
 getNumColors() const
 {
-  return colors_.size();
+  return uint(colors_.size());
 }
 
 void
@@ -164,9 +159,16 @@ setColorIndex(uint x, uint y, uint ind)
 {
   assert(colorMap_ && ind < colors_.size());
 
-  const CRGBA &rgba = colors_[ind];
+  const auto &rgba = colors_[ind];
 
-  pixmap_->setPixel(x, y, rgba.getId());
+  pixmap_->setPixel(x, y, rgba.getPixel());
+}
+
+void
+CPixmapImage::
+setColorIndexData(uint *)
+{
+  assert(false);
 }
 
 void

@@ -13,53 +13,55 @@ class CPixmapImage : public CGenImage {
 
   virtual ~CPixmapImage();
 
-  virtual CPixmapImage *dup() const;
+  CPixmapImage *dup() const override;
 
-  virtual void assign(const CGenImage &image);
+  void assign(const CGenImage &image) override;
 
-  virtual void setType(CFileType type);
+  void setType(Type type) override;
 
-  virtual void setSize(uint w, uint h);
+  void setSize(uint w, uint h) override;
 
-  virtual void setDataSize(uint w, uint h);
+  void setDataSize(uint w, uint h) override;
 
-  virtual uint getWidth () const;
-  virtual uint getHeight() const;
+  uint getWidth () const override;
+  uint getHeight() const override;
 
   virtual CPixmap *getPixmap() const;
 
   virtual CPixmap *extractPixmap();
 
-  virtual void setColormap(bool map);
+  void setColormap(bool map) override;
 
-  virtual bool hasColormap() const;
+  bool hasColormap() const override;
 
-  virtual void addColor(const CRGBA &rgba);
+  void addColor(const RGBA &rgba) override;
 
-  virtual const CRGBA &getColor(uint ind) const;
+  const RGBA &getColor(uint ind) const override;
 
-  virtual uint getNumColors() const;
+  uint getNumColors() const override;
 
-  virtual void setColorIndex(uint x, uint y, uint ind);
+  void setColorIndexData(uint *data) override;
 
-  virtual void setPixel(uint x, uint y, uint ind);
+  void setColorIndex(uint x, uint y, uint ind) override;
 
-  virtual uint getColorIndex(uint x, uint y) const;
+  void setPixel(uint x, uint y, uint ind) override;
 
-  virtual uint getPixel(uint x, uint y) const;
+  uint getColorIndex(uint x, uint y) const override;
 
-  virtual bool isTransparent() const;
+  uint getPixel(uint x, uint y) const override;
 
-  virtual uint getTransparentColor() const;
+  bool isTransparent() const override;
 
-  virtual void setTransparentColor(uint ind);
+  uint getTransparentColor() const override;
+
+  void setTransparentColor(uint ind) override;
 
  private:
-  CPixmap*           pixmap_;
-  bool               colorMap_;
-  std::vector<CRGBA> colors_;
-  int                transparent_color_;
-  CFileType          type_;
+  CPixmap*          pixmap_   { nullptr };
+  bool              colorMap_ { false };
+  std::vector<RGBA> colors_;
+  int               transparent_color_;
+  Type              type_ { Type::NONE };
 };
 
 #endif

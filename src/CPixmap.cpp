@@ -4,19 +4,22 @@
 #include <CJPGImage.h>
 #include <CPNGImage.h>
 #include <CXPMImage.h>
-#include <CFile.h>
+
 #include <CFileUtil.h>
+#include <CFile.h>
+
+#include <fstream>
 
 CPixmap::
 CPixmap(uint w, uint h) :
- w_(w), h_(h), data_(0), scale_(1)
+ w_(w), h_(h), data_(nullptr), scale_(1)
 {
   data_ = new Pixel [w_*h_];
 }
 
 CPixmap::
 CPixmap(const CPixmap &pixmap) :
- w_(pixmap.w_), h_(pixmap.h_), data_(0), scale_(pixmap.scale_)
+ w_(pixmap.w_), h_(pixmap.h_), data_(nullptr), scale_(pixmap.scale_)
 {
   data_ = new Pixel [w_*h_];
 }
@@ -86,7 +89,7 @@ getInstance()
 
 CPixmapMgr::
 CPixmapMgr() :
- factory_(0)
+ factory_(nullptr)
 {
 }
 
@@ -111,15 +114,16 @@ read(const std::string &filename)
 {
   CFile file(filename);
 
-  CFileType type = CFileUtil::getType(&file);
-
+  auto type = CFileUtil::getType(&file);
   if (! (type & CFILE_TYPE_IMAGE))
-    return 0;
+    return nullptr;
 
   CPixmapImage pixmapImage;
 
   if      (type == CFILE_TYPE_IMAGE_GIF) {
-    if (CGIFImageInst->read(&file, &pixmapImage))
+    auto ifile = std::ifstream(filename, std::ios::in);
+
+    if (CGIFImageInst->read(ifile, &pixmapImage))
       return pixmapImage.extractPixmap();
   }
   else if (type == CFILE_TYPE_IMAGE_JPG) {
@@ -135,5 +139,5 @@ read(const std::string &filename)
       return pixmapImage.extractPixmap();
   }
 
-  return 0;
+  return nullptr;
 }

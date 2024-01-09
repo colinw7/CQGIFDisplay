@@ -17,6 +17,11 @@ class CPNGImage {
     return instance;
   }
 
+ ~CPNGImage() { }
+
+  CPNGImage(const CPNGImage &png) = delete;
+  CPNGImage &operator=(const CPNGImage &png) = delete;
+
   bool read(CFile *file, CGenImage *image);
 
   bool readHeader(CFile *file, CGenImage *image);
@@ -25,12 +30,6 @@ class CPNGImage {
 
  private:
   CPNGImage();
-
- ~CPNGImage() { }
-
-  CPNGImage(const CPNGImage &png);
-
-  const CPNGImage &operator=(const CPNGImage &png);
 };
 
 #endif

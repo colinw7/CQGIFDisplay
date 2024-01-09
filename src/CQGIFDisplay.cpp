@@ -38,25 +38,20 @@ main(int argc, char **argv)
   return app.exec();
 }
 
+//---
+
 CQGIFDisplay::
-CQGIFDisplay() :
- canvas_(0), pixmap_(0), playing_(false), frame_size_(64), frame_border_(4)
+CQGIFDisplay()
 {
   resize(400, 300);
 
   setWindowTitle("CQGIFDisplay");
 
-  auto *layout1 = new QVBoxLayout(this);
-  layout1->setMargin(0); layout1->setSpacing(2);
+  auto *layout1 = CQUtil::makeLayout<QVBoxLayout>(this, 0, 2);
 
-  auto *layout2 = new QHBoxLayout;
-  layout2->setMargin(0); layout2->setSpacing(2);
-
-  auto *layout3 = new QVBoxLayout;
-  layout3->setMargin(0); layout3->setSpacing(2);
-
-  auto *layout4 = new QVBoxLayout;
-  layout4->setMargin(0); layout4->setSpacing(2);
+  auto *layout2 = CQUtil::makeLayout<QHBoxLayout>(0, 2);
+  auto *layout3 = CQUtil::makeLayout<QVBoxLayout>(0, 2);
+  auto *layout4 = CQUtil::makeLayout<QVBoxLayout>(0, 2);
 
   frame_edit_   = new CQIntegerEdit();
   left_edit_    = new CQIntegerEdit();
@@ -65,7 +60,7 @@ CQGIFDisplay() :
   delay_edit_   = new CQIntegerEdit();
   dispose_edit_ = new CQIntegerEdit();
 
-  auto *glayout = new QGridLayout;
+  auto *glayout = CQUtil::makeLayout<QGridLayout>(2, 2);
 
   glayout->addWidget(new CQLabel("Frame"  ), 0, 0);
   glayout->addWidget(new CQLabel("Left"   ), 1, 0);
@@ -79,16 +74,18 @@ CQGIFDisplay() :
   glayout->addWidget(delay_edit_  , 3, 1);
   glayout->addWidget(dispose_edit_, 4, 1);
 
-  auto *blayout = new QHBoxLayout;
-  blayout->setMargin(0); blayout->setSpacing(2);
+  auto *blayout = CQUtil::makeLayout<QHBoxLayout>(0, 2);
 
-  auto *edit_button   = new QPushButton("Edit");
-  auto *delete_button = new QPushButton("Delete");
+  auto *edit_button   = CQUtil::makeLabelWidget<QPushButton>("Edit", "edit");
+//auto *delete_button = CQUtil::makeLabelWidget<QPushButton>("Delete", "delete");
+  auto *save_button   = CQUtil::makeLabelWidget<QPushButton>("Save", "save");
 
   connect(edit_button, SIGNAL(clicked()), this, SLOT(editSlot()));
+  connect(save_button, SIGNAL(clicked()), this, SLOT(saveSlot()));
 
   blayout->addWidget(edit_button);
-  blayout->addWidget(delete_button);
+//blayout->addWidget(delete_button);
+  blayout->addWidget(save_button);
   blayout->addStretch();
 
   layout4->addLayout(glayout);
@@ -101,8 +98,7 @@ CQGIFDisplay() :
 
   layout3->addWidget(canvas_);
 
-  auto *clayout = new QHBoxLayout;
-  clayout->setMargin(2); clayout->setSpacing(16);
+  auto *clayout = CQUtil::makeLayout<QHBoxLayout>(2, 16);
 
   auto *play_button  = new CQImageButton(CQPixmapCacheInst->getIcon("PLAY"));
   auto *pause_button = new CQImageButton(CQPixmapCacheInst->getIcon("PAUSE"));
@@ -160,12 +156,12 @@ loadFile(const std::string &filename)
   setFrame(0);
 
   if (anim_ && anim_->size() == 0)
-    anim_ = 0;
+    anim_ = nullptr;
 
   if (anim_) {
-    CImageFrame *frame = (*anim_)[0];
+    auto *frame = (*anim_)[0];
 
-    CImagePtr image = frame->getImage();
+    auto image = frame->getImage();
 
     int d = getFrameBorder();
 
@@ -182,11 +178,8 @@ loadFile(const std::string &filename)
 
     int x = d;
 
-    CImageAnim::iterator p1 = anim_->begin();
-    CImageAnim::iterator p2 = anim_->end  ();
-
-    for ( ; p1 != p2; ++p1) {
-      CImagePtr image = (*p1)->getImage();
+    for (auto pa = anim_->begin(); pa != anim_->end(); ++pa) {
+      auto image = (*pa)->getImage();
 
       int s = std::max(image->getWidth(), image->getHeight());
 
@@ -219,11 +212,11 @@ setFrame(int frame)
 
   frame_edit_->setValue(frame_);
 
-  CImageFrame *iframe = (*anim_)[frame_];
+  auto *iframe = (*anim_)[frame_];
 
   delay_edit_->setValue(iframe->getDelay());
 
-  CImagePtr image = iframe->getImage();
+  auto image = iframe->getImage();
 
   int l = image->getLeft();
   int t = image->getTop ();
@@ -255,12 +248,11 @@ draw(QPainter *painter)
 {
   if (! anim_) return;
 
-  CImageFrame *frame = (*anim_)[getFrame()];
+  auto *frame = (*anim_)[getFrame()];
 
-  CImagePtr image = frame->getImage();
+  auto image = frame->getImage();
 
   int l, b, r, t;
-
   image->getBorder(&l, &b, &r, &t);
 
   int dispose = frame->getDispose();
@@ -351,11 +343,77 @@ editSlot()
   if (anim_) {
     CImageFrame *frame = (*anim_)[getFrame()];
 
-    CImagePtr image = frame->getImage();
+    auto image = frame->getImage();
 
     pixmap_->loadImage(image);
 
     pixmap_->show();
+  }
+}
+
+void
+CQGIFDisplay::
+saveSlot()
+{
+  int w = 0, h = 0;
+
+  uint i = 0;
+
+  for (auto pa = anim_->begin(); pa != anim_->end(); ++pa) {
+    auto image = (*pa)->getImage();
+
+    int l, b, r, t;
+    image->getBorder(&l, &b, &r, &t);
+
+    auto qimage = CQImageUtil::toQImage(image);
+
+    if (i == 0) {
+      w = qimage.width();
+      h = qimage.height();
+    }
+    else {
+      w = std::max(w, qimage.width ());
+      h = std::max(h, qimage.height());
+    }
+
+    ++i;
+  }
+
+  //---
+
+  auto saveImage = QImage(QSize(w, h), QImage::Format_ARGB32);
+
+  QPainter painter(&saveImage);
+
+  i = 0;
+
+  for (auto pa = anim_->begin(); pa != anim_->end(); ++pa) {
+    auto *frame = (*anim_)[i];
+
+    auto image = (*pa)->getImage();
+
+    int l, b, r, t;
+    image->getBorder(&l, &b, &r, &t);
+
+    int dispose = frame->getDispose();
+
+    if (dispose == 2) {
+      auto bg = image->getColor(image->getTransparentColor());
+
+      bg.setAlpha(1);
+
+      painter.fillRect(rect(), QBrush(CQUtil::rgbaToColor(bg)));
+    }
+
+    auto qimage = CQImageUtil::toQImage(image);
+
+    painter.drawImage(QPoint(l, t), qimage);
+
+    auto name = QString("frame_%1.png").arg(i);
+
+    saveImage.save(name, "PNG");
+
+    ++i;
   }
 }
 
@@ -366,7 +424,7 @@ timeout()
   if (anim_) {
     incrFrame();
 
-    CImageFrame *frame = (*anim_)[getFrame()];
+    auto *frame = (*anim_)[getFrame()];
 
     int delay = frame->getDelay();
 
@@ -415,13 +473,14 @@ paintEvent(QPaintEvent *)
 
 CQGIFDisplayStrip::
 CQGIFDisplayStrip(CQGIFDisplay *display) :
- QWidget(0), display_(display)
+ QWidget(nullptr), display_(display)
 {
-  auto *layout = new QVBoxLayout(this);
+  auto *layout = CQUtil::makeLayout<QVBoxLayout>(this, 2, 2);
 
   canvas_ = new CQGIFDisplayStripCanvas(this);
 
-  hbar_ = new QScrollBar(Qt::Horizontal);
+  hbar_ = CQUtil::makeWidget<QScrollBar>("hscroll");
+  hbar_->setOrientation(Qt::Horizontal);
 
   connect(hbar_, SIGNAL(valueChanged(int)), this, SLOT(scrollSlot(int)));
 
@@ -456,7 +515,7 @@ updateScrollbar()
 
 CQGIFDisplayStripCanvas::
 CQGIFDisplayStripCanvas(CQGIFDisplayStrip *strip) :
- QWidget(0), strip_(strip), offset_(0)
+ QWidget(nullptr), strip_(strip)
 {
 }
 
@@ -486,13 +545,10 @@ paintEvent(QPaintEvent *)
 
   int frame = 0;
 
-  CImageAnim *anim = strip_->getDisplay()->getAnim();
+  auto *anim = strip_->getDisplay()->getAnim();
 
-  CImageAnim::iterator p1 = anim->begin();
-  CImageAnim::iterator p2 = anim->end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CImagePtr image = (*p1)->getImage();
+  for (auto pa = anim->begin(); pa != anim->end(); ++pa) {
+    auto image = (*pa)->getImage();
 
     int l = image->getLeft();
     int t = image->getTop ();
@@ -502,9 +558,9 @@ paintEvent(QPaintEvent *)
     CRGBA bg;
 
     if (frame == strip_->getDisplay()->getFrame())
-      bg = CRGBA(0.8,0.6,0.6);
+      bg = CRGBA(0.8, 0.6, 0.6);
     else
-      bg = CRGBA(0.6,0.6,0.8);
+      bg = CRGBA(0.6, 0.6, 0.8);
 
     painter.fillRect(QRect(x + l - d/2, y + t - d/2, s + d, s + d),
                      QBrush(CQUtil::rgbaToColor(bg)));
@@ -533,13 +589,10 @@ mousePressEvent(QMouseEvent *e)
 
   int frame = 0;
 
-  CImageAnim *anim = strip_->getDisplay()->getAnim();
+  auto *anim = strip_->getDisplay()->getAnim();
 
-  CImageAnim::iterator p1 = anim->begin();
-  CImageAnim::iterator p2 = anim->end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CImagePtr image = (*p1)->getImage();
+  for (auto pa = anim->begin(); pa != anim->end(); ++pa) {
+    auto image = (*pa)->getImage();
 
     int s = std::max(image->getWidth(), image->getHeight());
 
